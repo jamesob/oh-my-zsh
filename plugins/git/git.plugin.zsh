@@ -1,8 +1,8 @@
 # Aliases
 alias g='git'
 compdef g=git
-alias gst='git status'
-compdef _git gst=git-status
+alias gs='git status'
+compdef _git gs=git-status
 alias gl='git pull'
 compdef _git gl=git-pull
 alias gup='git fetch && git rebase'
@@ -38,6 +38,7 @@ alias gm='git merge'
 compdef _git gm=git-merge
 alias grh='git reset HEAD'
 alias grhh='git reset HEAD --hard'
+alias gd='git diff --color'
 
 # Git and svn mix
 alias git-svn-dcommit-push='git svn dcommit && git push github master:svntrunk'
@@ -55,9 +56,9 @@ function current_branch() {
 }
 
 # these aliases take advantage of the previous function
-alias ggpull='git pull origin $(current_branch)'
-compdef ggpull=git
-alias ggpush='git push origin $(current_branch)'
-compdef ggpush=git
-alias ggpnp='git pull origin $(current_branch) && git push origin $(current_branch)'
-compdef ggpnp=git
+alias gpull='git pull origin $(current_branch)'
+compdef gpull=git
+alias gpush='git push origin $(current_branch)'
+compdef gpush=git
+alias gpnp='git pull origin $(current_branch) && git push origin $(current_branch)'
+compdef gpnp=git
