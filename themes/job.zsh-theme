@@ -14,7 +14,7 @@ ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
 git_status_indication() {
     local GIT_STATUS_PREFIX="%{$fg[green]%}"
     local GIT_STATUS_SUFFIX="$ZSH_THEME_GIT_PROMPT_SUFFIX"
-    echo "${GIT_STATUS_PREFIX}$1${GIT_STATUS_SUFFIX}"
+    echo "${GIT_STATUS_PREFIX}$1${GIT_STATUS_SUFFIX} "
 }
 
 ZSH_THEME_GIT_PROMPT_AHEAD="$(git_status_indication ⇥)"
