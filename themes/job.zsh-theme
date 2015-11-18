@@ -8,7 +8,13 @@ function precmd {
     printf "\n";
 }
 
-PROMPT=' [%w %T] %B%{$fg[blue]%}%3d%{$reset_color%} $(git_prompt_info) $(git_prompt_status)$(git_prompt_ahead)%{$reset_color%}
+function current_desk() {
+    if [ ! -z "$DESK_NAME" ]; then
+        echo "{$fg[006]%}◲ ${DESK_NAME}{$reset_color%}"
+    fi
+}
+
+PROMPT=' [%w %T] %B%{$fg[blue]%}%3d%{$reset_color%} $(git_prompt_info) $(git_prompt_status)$(git_prompt_ahead)%{$reset_color%}$(current_desk)
  $ '
 
 ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[magenta]%}"
