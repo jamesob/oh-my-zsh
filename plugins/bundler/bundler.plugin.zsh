@@ -14,6 +14,7 @@ bundled_commands=(
   cucumber
   foodcritic
   guard
+  hanami
   irb
   jekyll
   kitchen
@@ -54,11 +55,11 @@ done
 
 bundle_install() {
   if _bundler-installed && _within-bundled-project; then
-    local bundler_version=`bundle version | cut -d' ' -f3`
+    local bundler_version=`bundle --version | cut -d' ' -f3`
     if [[ $bundler_version > '1.4.0' || $bundler_version = '1.4.0' ]]; then
-      if [[ "$OSTYPE" = darwin* ]]
+      if [[ "$OSTYPE" = (darwin|freebsd)* ]]
       then
-        local cores_num="$(sysctl hw.ncpu | awk '{print $2}')"
+        local cores_num="$(sysctl -n hw.ncpu)"
       else
         local cores_num="$(nproc)"
       fi

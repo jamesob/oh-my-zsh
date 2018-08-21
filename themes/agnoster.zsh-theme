@@ -13,8 +13,12 @@
 #
 # In addition, I recommend the
 # [Solarized theme](https://github.com/altercation/solarized/) and, if you're
-# using it on Mac OS X, [iTerm 2](http://www.iterm2.com/) over Terminal.app -
+# using it on Mac OS X, [iTerm 2](https://iterm2.com/) over Terminal.app -
 # it has significantly better color fidelity.
+#
+# If using with "light" variant of the Solarized color schema, set
+# SOLARIZED_THEME variable to "light". If you don't specify, we'll assume
+# you're using the "dark" variant.
 #
 # # Goals
 #
@@ -29,6 +33,11 @@
 # A few utility functions to make it easy and re-usable to draw segmented prompts
 
 CURRENT_BG='NONE'
+
+case ${SOLARIZED_THEME:-dark} in
+    light) CURRENT_FG='white';;
+    *)     CURRENT_FG='black';;
+esac
 
 # Special Powerline characters
 
@@ -86,22 +95,22 @@ prompt_context() {
 
 # Git: branch/detached head, dirty status
 prompt_git() {
-
+  (( $+commands[git] )) || return
   local PL_BRANCH_CHAR
   () {
     local LC_ALL="" LC_CTYPE="en_US.UTF-8"
     PL_BRANCH_CHAR=$'\ue0a0'         # 
   }
   local ref dirty mode repo_path
-  repo_path=$(git rev-parse --git-dir 2>/dev/null)
 
   if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
+    repo_path=$(git rev-parse --git-dir 2>/dev/null)
     dirty=$(parse_git_dirty)
     ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git rev-parse --short HEAD 2> /dev/null)"
     if [[ -n $dirty ]]; then
       prompt_segment yellow black
     else
-      prompt_segment green black
+      prompt_segment green $CURRENT_FG
     fi
 
     if [[ -e "${repo_path}/BISECT_LOG" ]]; then
@@ -127,8 +136,31 @@ prompt_git() {
   fi
 }
 
+prompt_bzr() {
+    (( $+commands[bzr] )) || return
+    if (bzr status >/dev/null 2>&1); then
+        status_mod=`bzr status | head -n1 | grep "modified" | wc -m`
+        status_all=`bzr status | head -n1 | wc -m`
+        revision=`bzr log | head -n2 | tail -n1 | sed 's/^revno: //'`
+        if [[ $status_mod -gt 0 ]] ; then
+            prompt_segment yellow black
+            echo -n "bzr@"$revision "✚ "
+        else
+            if [[ $status_all -gt 0 ]] ; then
+                prompt_segment yellow black
+                echo -n "bzr@"$revision
+
+            else
+                prompt_segment green black
+                echo -n "bzr@"$revision
+            fi
+        fi
+    fi
+}
+
 prompt_hg() {
-  local rev status
+  (( $+commands[hg] )) || return
+  local rev st branch
   if $(hg id >/dev/null 2>&1); then
     if $(hg prompt >/dev/null 2>&1); then
       if [[ $(hg prompt "{status|unknown}") = "?" ]]; then
@@ -141,7 +173,7 @@ prompt_hg() {
         st='±'
       else
         # if working copy is clean
-        prompt_segment green black
+        prompt_segment green $CURRENT_FG
       fi
       echo -n $(hg prompt "☿ {rev}@{branch}") $st
     else
@@ -155,7 +187,7 @@ prompt_hg() {
         prompt_segment yellow black
         st='±'
       else
-        prompt_segment green black
+        prompt_segment green $CURRENT_FG
       fi
       echo -n "☿ $rev@$branch" $st
     fi
@@ -164,7 +196,7 @@ prompt_hg() {
 
 # Dir: current working directory
 prompt_dir() {
-  prompt_segment blue black '%~'
+  prompt_segment blue $CURRENT_FG '%~'
 }
 
 # Virtualenv: current working virtualenv
@@ -197,6 +229,7 @@ build_prompt() {
   prompt_context
   prompt_dir
   prompt_git
+  prompt_bzr
   prompt_hg
   prompt_end
 }
