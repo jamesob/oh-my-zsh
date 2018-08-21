@@ -1,5 +1,5 @@
 # ZSH Git Prompt Plugin from:
-# https://github.com/olivierverdier/zsh-git-prompt
+# http://github.com/olivierverdier/zsh-git-prompt
 
 __GIT_PROMPT_DIR="${0:A:h}"
 
@@ -42,12 +42,14 @@ function update_current_git_vars() {
     GIT_CONFLICTS=$__CURRENT_GIT_STATUS[5]
     GIT_CHANGED=$__CURRENT_GIT_STATUS[6]
     GIT_UNTRACKED=$__CURRENT_GIT_STATUS[7]
+    GIT_COMMIT=$(git show-ref HEAD | cut -d' ' -f1 2>/dev/null)
+    GIT_COMMIT_SHORT=" (${GIT_COMMIT:0:6})"
 }
 
 git_super_status() {
     precmd_update_git_vars
     if [ -n "$__CURRENT_GIT_STATUS" ]; then
-      STATUS="$ZSH_THEME_GIT_PROMPT_PREFIX$ZSH_THEME_GIT_PROMPT_BRANCH$GIT_BRANCH%{${reset_color}%}"
+      STATUS="$ZSH_THEME_GIT_PROMPT_PREFIX$ZSH_THEME_GIT_PROMPT_BRANCH$GIT_BRANCH foo $GIT_COMMIT_SHORT%{${reset_color}%}"
       if [ "$GIT_BEHIND" -ne "0" ]; then
           STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_BEHIND$GIT_BEHIND%{${reset_color}%}"
       fi
