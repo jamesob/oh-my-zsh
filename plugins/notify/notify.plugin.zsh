@@ -29,7 +29,7 @@ function notify-success() {
 
     ((diff = $now - $start_time ))
     if (( $diff > $command_complete_timeout )); then
-        notify-send "'$last_command' completed with &!"
+        notify-send "'$last_command' completed"
         # notify-if-background success <<< "$last_command" &!
     fi
 }
